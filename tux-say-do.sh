@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================
 #  TUX-SAY-DO Installer
-#  Adds Tux greeting to ~/.bashrc
-#  Safe to run multiple times (idempotent)
+#  Adds Tux who says some crazy stuff
+#  Like cowsay but better
 # =============================================
 
 if grep -q "TUX-SAY-DO" ~/.bashrc 2>/dev/null; then
@@ -169,5 +169,3 @@ tux-fortune() {
 tux-say "$(tux-fortune)"
 # ===== END TUX-SAY-DO =====
 BASHRC_BLOCK
-
-echo "TUX-SAY-DO installed! Open a new terminal to see Tux."
