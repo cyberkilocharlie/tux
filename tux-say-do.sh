@@ -136,6 +136,11 @@ tux-fortune() {
         "she sudo on my terminal till i kernel"
         "Jet fuel doesnt melt steel beams."
         "Yeah, well, you know, thats just, like, your opinion, man."
+        "I know what wrong wif it. Aint got no gas innit."
+        "Brother. May I have some oats?"
+        "The mysteries of the orient intrigue me."
+        "Clanker"
+        "youtube.com/watch?v=dQw4w9WgXcQ"
     )
 
     local total=${#fortunes[@]}
