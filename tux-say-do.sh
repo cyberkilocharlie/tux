@@ -145,6 +145,12 @@ tux-fortune() {
         "...theres no I in team. There is a me, though, if you jumble it up."
         "A psychic once told me that Im psychic"
         "Never is just reven spelled backwards"
+        "Stay strapped or get clapped -Sun Tzu, The Art of War"
+        "Build a man a fire and hell be warm for a night... Set a man on fire and hell be warm for the rest of his life."
+        "Remember only forest fires prevent bears."
+        "Im not the messiah, now FUCK OFF!"
+        "If nothing goes right, go left"
+        "Did you know that if you mix equal parts of gasoline and frozen orange juice concentrate you can make napalm?"
     )
 
     local total=${#fortunes[@]}
