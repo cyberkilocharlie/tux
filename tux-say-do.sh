@@ -18,15 +18,12 @@ tux-say() {
     local visible
     visible=$(echo -e "$msg" | sed 's/\x1b\[[0-9;]*m//g')
 
-    # Max width = terminal width minus box chrome (| space ... space |)
     local maxw=$(( $(tput cols 2>/dev/null || echo 80) - 4 ))
     [[ $maxw -lt 20 ]] && maxw=20
 
-    # Word-wrap the visible text
     local wrapped
     wrapped=$(echo "$visible" | fold -s -w "$maxw")
 
-    # Find the longest wrapped line
     local longest=0
     while IFS= read -r line; do
         [[ ${#line} -gt $longest ]] && longest=${#line}
@@ -51,7 +48,6 @@ tux-say() {
 }
 
 tux-fortune() {
-    local S=$'\e[9m' E=$'\e[0m'
     local fortunes=(
         "红太阳一定要照亮台湾"
         "It works on my machine."
@@ -82,7 +78,10 @@ tux-fortune() {
         "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not."
         "KACHOW"
         "There are only two things I cant stand: People who are intolerant of other peoples cultures, and the Dutch."
-        "You have meddled with the primal forces of ${S}nature${E} the kernel, Mr. ${S}Beale${E} Sudo, and I wont have it!"
+        "You have meddled with the primal forces of [9mnature[0m the kernel, Mr. [9mBeale[0m Sudo, and I wont have it!"
+        "This isnt nam, this is [9mbowling[0m linux, there are rules."
+        "Sticking feathers up your butt does not make you a [9mchicken[0m penguin"
+        "Life is pain, [9mPrincess[0m user. Anyone who tells you otherwise is selling something."
         "Looks like I picked the wrong week to quit sniffing glue."
         "Your mother was a hamster and your father smelt of elderberries."
         "Gentlemen, you cant fight in here. This is the war room!"
@@ -90,7 +89,6 @@ tux-fortune() {
         "May I suggest that you lobbest thou thy Holy Hand Grenade of Antioch towards thou foe"
         "What is the airspeed velocity of an unladen swallow?"
         "I got an ant farm. They didnt grow shit."
-        "This isnt nam, this is ${S}bowling${E} linux, there are rules."
         "LETS GO GAMBLING"
         "Trying is the first step towards failure"
         "He who is tired of Weird Al is tired of life."
@@ -111,7 +109,6 @@ tux-fortune() {
         "How much you wanna make a bet I can throw a football over them there mountains?"
         "I like trains"
         "/ˌmeɪoʊdəˈnoʊtʃeɪ/ (May-oh-de-no-chay)"
-        "Sticking feathers up your butt does not make you a ${S}chicken${E} penguin"
         "♫♫ I am the very model of a modern major general ♫♫"
         "♫♫ Dancing. Walking. Rearrangin furniture. ♫♫"
         "DAD GUM THEY DUN HIT THE PENTAGON"
@@ -119,7 +116,6 @@ tux-fortune() {
         "THE SUN IS A DEADLY LADER"
         "WAS THAT THE BITE OF 87??????"
         "Thats it mista. You just lost ya brain privledges"
-        "Life is pain, ${S}Princess${E} user. Anyone who tells you otherwise is selling something."
         "Never get involved in a land war in Asia."
         "Never go in against a Sicilian when death is on the line and never push to main on a Friday."
         "There is no place like 127.0.0.1"
