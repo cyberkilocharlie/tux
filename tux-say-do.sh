@@ -5,7 +5,6 @@
 #  Safe to run multiple times (idempotent)
 # =============================================
 
-# Don't install if already present
 if grep -q "TUX-SAY-DO" ~/.bashrc 2>/dev/null; then
     echo "TUX-SAY-DO already installed."
     exit 0
@@ -16,11 +15,31 @@ cat >> ~/.bashrc << 'BASHRC_BLOCK'
 # ===== TUX-SAY-DO =====
 tux-say() {
     local msg="$*"
-    local len=${#msg}
+    local visible
+    visible=$(echo -e "$msg" | sed 's/\x1b\[[0-9;]*m//g')
+
+    # Max width = terminal width minus box chrome (| space ... space |)
+    local maxw=$(( $(tput cols 2>/dev/null || echo 80) - 4 ))
+    [[ $maxw -lt 20 ]] && maxw=20
+
+    # Word-wrap the visible text
+    local wrapped
+    wrapped=$(echo "$visible" | fold -s -w "$maxw")
+
+    # Find the longest wrapped line
+    local longest=0
+    while IFS= read -r line; do
+        [[ ${#line} -gt $longest ]] && longest=${#line}
+    done <<< "$wrapped"
+
     local border
-    border=$(printf '%*s' "$len" '' | tr ' ' '-')
+    border=$(printf '%*s' "$longest" '' | tr ' ' '-')
+
     echo ".-${border}-."
-    echo "| $msg |"
+    while IFS= read -r line; do
+        local pad=$(( longest - ${#line} ))
+        printf "| %s%*s |\n" "$line" "$pad" ''
+    done <<< "$wrapped"
     echo "'-${border}-'"
     echo '    \      .-.'
     echo '     \    |o_o|'
@@ -32,6 +51,7 @@ tux-say() {
 }
 
 tux-fortune() {
+    local S=$'\e[9m' E=$'\e[0m'
     local fortunes=(
         "红太阳一定要照亮台湾"
         "It works on my machine."
@@ -62,7 +82,7 @@ tux-fortune() {
         "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not."
         "KACHOW"
         "There are only two things I cant stand: People who are intolerant of other peoples cultures, and the Dutch."
-        "You have meddled with the primal forces of ~~nature~~ the kernel, Mr. ~~Beale~~ Sudo, and I wont have it!"
+        "You have meddled with the primal forces of ${S}nature${E} the kernel, Mr. ${S}Beale${E} Sudo, and I wont have it!"
         "Looks like I picked the wrong week to quit sniffing glue."
         "Your mother was a hamster and your father smelt of elderberries."
         "Gentlemen, you cant fight in here. This is the war room!"
@@ -70,7 +90,7 @@ tux-fortune() {
         "May I suggest that you lobbest thou thy Holy Hand Grenade of Antioch towards thou foe"
         "What is the airspeed velocity of an unladen swallow?"
         "I got an ant farm. They didnt grow shit."
-        "This isnt nam, this is ~~bowling~~ linux, there are rules."
+        "This isnt nam, this is ${S}bowling${E} linux, there are rules."
         "LETS GO GAMBLING"
         "Trying is the first step towards failure"
         "He who is tired of Weird Al is tired of life."
@@ -91,7 +111,7 @@ tux-fortune() {
         "How much you wanna make a bet I can throw a football over them there mountains?"
         "I like trains"
         "/ˌmeɪoʊdəˈnoʊtʃeɪ/ (May-oh-de-no-chay)"
-        "Sticking feathers up your butt does not make you a ~~chicken~~ penguin"
+        "Sticking feathers up your butt does not make you a ${S}chicken${E} penguin"
         "♫♫ I am the very model of a modern major general ♫♫"
         "♫♫ Dancing. Walking. Rearrangin furniture. ♫♫"
         "DAD GUM THEY DUN HIT THE PENTAGON"
@@ -99,28 +119,56 @@ tux-fortune() {
         "THE SUN IS A DEADLY LADER"
         "WAS THAT THE BITE OF 87??????"
         "Thats it mista. You just lost ya brain privledges"
-        "Life is pain, ~~Princess~~ user. Anyone who tells you otherwise is selling something."
-        "Never get involved in a land war in Asia."
-        "Never go in against a Sicilian when death is on the line… and never push to main on a Friday."
-        "There is no place like 127.0.0.1"
-        "Whats the magic word?"
-        "It compiled. That means it works."
-        "One does not simply exit Vim."
-        "I use Arch, by the way."
-        "Home is where ~ is."
-        "If brute force doesnt work, youre not using enough of it."
-        "Have you tried turning it off and on again?"
-        "If its stupid and it works, its still stupid but it works."
-        "Born to code. Forced to comment."
-        "I crave violence (in Minecraft)."
-        "Try out sudo rm -rf /*. It removes the french. I dont like the french"
-        "imbatman"
-        "Bold of you to assume I give a fuck."
-        "Can we please do an arson"
-        "Skibidi toilet is proof the internet peaked and then did a backflip into hell."
-        "Please pull out my fuckin power cord rn"
+        "Life is pain, ${S}Princess${E} user. Anyone who tells you otherwise is selling something."
+        "Never get involved in a land war in Asia."
+        "Never go in against a Sicilian when death is on the line and never push to main on a Friday."
+        "There is no place like 127.0.0.1"
+        "Whats the magic word?"
+        "It compiled. That means it works."
+        "One does not simply exit Vim."
+        "I use Arch, by the way."
+        "Home is where ~ is."
+        "If brute force doesnt work, youre not using enough of it."
+        "If its stupid and it works, its still stupid but it works."
+        "Born to code. Forced to comment."
+        "I crave violence (in Minecraft)."
+        "Try out sudo rm -rf /*. It removes the french. I dont like the french"
+        "imbatman"
+        "Bold of you to assume I give a fuck."
+        "Can we please do an arson"
+        "Skibidi toilet is proof the internet peaked and then did a backflip into hell."
+        "Please pull out my fuckin power cord rn"
+        "she sudo on my terminal till i linux"
+        "Jet fuel doesnt melt steel beams."
+        "Yeah, well, you know, thats just, like, your opinion, man."
     )
-    echo "${fortunes[$RANDOM % ${#fortunes[@]}]}"
+
+    local total=${#fortunes[@]}
+    local seen_file=~/.tux-seen
+
+    local seen=()
+    if [[ -f "$seen_file" ]]; then
+        mapfile -t seen < "$seen_file"
+    fi
+
+    if [[ ${#seen[@]} -ge $total ]]; then
+        seen=()
+        > "$seen_file"
+    fi
+
+    local unseen=()
+    for i in "${!fortunes[@]}"; do
+        local found=0
+        for s in "${seen[@]}"; do
+            [[ "$s" == "$i" ]] && found=1 && break
+        done
+        [[ $found -eq 0 ]] && unseen+=("$i")
+    done
+
+    local pick=${unseen[$RANDOM % ${#unseen[@]}]}
+    echo "$pick" >> "$seen_file"
+
+    echo -e "${fortunes[$pick]}"
 }
 
 tux-say "$(tux-fortune)"
