@@ -141,6 +141,10 @@ tux-fortune() {
         "The mysteries of the orient intrigue me."
         "Clanker"
         "youtube.com/watch?v=dQw4w9WgXcQ"
+        "...like the philosopher Jagger once said, You cant always get what you want."
+        "...theres no I in team. There is a me, though, if you jumble it up."
+        "A psychic once told me that Im psychic"
+        "Never is just reven spelled backwards"
     )
 
     local total=${#fortunes[@]}
