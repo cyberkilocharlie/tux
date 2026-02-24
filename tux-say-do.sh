@@ -152,6 +152,10 @@ tux-fortune() {
         "If nothing goes right, go left"
         "Did you know that if you mix equal parts of gasoline and frozen orange juice concentrate you can make napalm?"
         "I am the Lorax and I speak for the trees, but for some reason theyre speaking vietnamese"
+        "ܐܢܬܐ ܚܕ ܐܢܐ ܐܬܪܐ ܠܩܒܠ templeOS ܐܢܐ"
+        "Despite all my rage I am still just a penguin in a cage"
+        "But buddy just left for the mountains some 70km away. But why?"
+        "Zinky zoogle, zeekybooble beeble meep Forp Bogos Binted?"
     )
 
     local total=${#fortunes[@]}
