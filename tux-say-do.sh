@@ -156,6 +156,8 @@ tux-fortune() {
         "Despite all my rage I am still just a penguin in a cage"
         "But buddy just left for the mountains some 70km away. But why?"
         "Zinky zoogle, zeekybooble beeble meep Forp Bogos Binted?"
+        "Microslop"
+        "Superuser? I hardly even know her..."
     )
 
     local total=${#fortunes[@]}
