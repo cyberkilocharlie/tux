@@ -151,6 +151,7 @@ tux-fortune() {
         "Im not the messiah, now FUCK OFF!"
         "If nothing goes right, go left"
         "Did you know that if you mix equal parts of gasoline and frozen orange juice concentrate you can make napalm?"
+        "I am the Lorax and I speak for the trees, but for some reason theyre speaking vietnamese"
     )
 
     local total=${#fortunes[@]}
